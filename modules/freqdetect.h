@@ -18,17 +18,20 @@ class FreqDetect
     void Process(float in);
 
     /** \return ms per tick */
-    inline float GetFreqMs() { return (last_counter_ / sample_rate_) * 1000; }
+    inline float GetFreqMs() { return ((float)last_counter_ / (float)sample_rate_) * 1000.f; }
 
     /** \return Samples per tick */
-    inline float GetFreqSamp() { return last_counter_; }
+    inline float GetFreqSamp() { return (float)last_counter_; }
 
     /** \return Ticks per second */
-    inline float GetFreqHz() { return sample_rate_ / last_counter_; }
+    float GetFreqHz();
+
+    /** param thresh Level of signal's positive peak. Defaults to .95 */
+    inline void SetThreshold(float thresh) { threshold_ = thresh; }
     
   private:
-      float sample_rate_;
-      bool active_;
+      float sample_rate_, threshold_;
+      bool active_, last_;
       uint32_t counter_, last_counter_;
       void Increment();
 };
