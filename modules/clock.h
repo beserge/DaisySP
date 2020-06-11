@@ -6,6 +6,9 @@
 #include <stdint.h>
 #ifdef __cplusplus
 
+#include "metro.h"
+#include "freqdetect.h"
+
 namespace daisysp
 {
 
@@ -34,7 +37,7 @@ class Clock
     inline void SetMult(int mult) { mult_amount_ = mult; }
     
   private:
-    float sample_rate_, measure_freq_, internal_freq_;
+    float sample_rate_, internal_freq_;
     int mult_amount_, div_amount_, div_count_;
     clockmode mode_;
     bool last_;
@@ -42,6 +45,10 @@ class Clock
     void Reset();
     uint8_t Divide(uint8_t input);
     uint8_t Multiply(uint8_t input);
+
+    Metro tick_internal, tick;
+    FreqDetect freqdetect;
+    
 };
 } // namespace daisysp
 #endif

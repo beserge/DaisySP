@@ -5,7 +5,7 @@ using namespace daisysp;
 using namespace daisy;
 
 static DaisySeed  seed;
-static Clock      clock, subdiv;
+static Clock      clock, subdiv, mult;
 static Oscillator osc_sine;
 static AdEnv env;
 
@@ -16,14 +16,14 @@ static void AudioCallback(float *in, float *out, size_t size)
     for(size_t i = 0; i < size; i += 2)
     {
         tic = clock.Process(0);
-        if(tic)
+        if(mult.Process(tic))
         {
 	    env.Trigger();
 	}
 
-	//if (subdiv.Process(0))
+	if(subdiv.Process(tic))
 	{
-	  //osc_sine.SetFreq(rand() % 500 + 300);
+	    env.Trigger();
 	}
 	
 	env_out = env.Process();
@@ -46,14 +46,20 @@ int main(void)
     seed.Init();
     sample_rate = seed.AudioSampleRate();
 
-    // initialize Metro object
+    // initialize Clock object
     clock.Init(sample_rate);
-    clock.SetFreq(1);
+    clock.SetFreq(4.f);
 
-    // init subdivision object
+    // init subdivision
     subdiv.Init(sample_rate);
     subdiv.SetMode(Clock::CLK_EXTERNAL);
-    subdiv.SetMult(2);
+    subdiv.SetDiv(2);
+
+    // init multiply
+    mult.Init(sample_rate);
+    mult.SetMode(Clock::CLK_EXTERNAL);
+    mult.SetDiv(4);
+    mult.SetMult(3);
     
     // set parameters for sine oscillator object
     osc_sine.Init(sample_rate);
@@ -64,14 +70,13 @@ int main(void)
     //Set envelope parameters
     env.Init(sample_rate);
     env.SetTime(ADENV_SEG_ATTACK, .01);
-    env.SetTime(ADENV_SEG_DECAY, .1);
+    env.SetTime(ADENV_SEG_DECAY, .05);
     env.SetMax(.5);
     env.SetMin(0);
     env.SetCurve(0);
     
     // start callback
     seed.StartAudio(AudioCallback);
-
 
     while(1) {}
 }
