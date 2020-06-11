@@ -34,13 +34,12 @@ class Clock
     inline void SetMult(int mult) { mult_amount_ = mult; }
     
   private:
-    float sample_rate_, freq_, measure_freq_, mult_thresh_;
+    float sample_rate_, measure_freq_, internal_freq_;
     int mult_amount_, div_amount_, div_count_;
     clockmode mode_;
     bool last_;
     
     void Reset();
-    void ProcessExternal(float input);
     uint8_t Divide(uint8_t input);
     uint8_t Multiply(uint8_t input);
 };

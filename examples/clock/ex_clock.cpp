@@ -21,9 +21,9 @@ static void AudioCallback(float *in, float *out, size_t size)
 	    env.Trigger();
 	}
 
-	if (subdiv.Process((float)tic))
+	//if (subdiv.Process(0))
 	{
-	    osc_sine.SetFreq(rand() % 500);
+	  //osc_sine.SetFreq(rand() % 500 + 300);
 	}
 	
 	env_out = env.Process();
@@ -48,12 +48,12 @@ int main(void)
 
     // initialize Metro object
     clock.Init(sample_rate);
-    clock.SetMode(Clock::CLK_INTERNAL);
     clock.SetFreq(1);
 
     // init subdivision object
     subdiv.Init(sample_rate);
     subdiv.SetMode(Clock::CLK_EXTERNAL);
+    subdiv.SetMult(2);
     
     // set parameters for sine oscillator object
     osc_sine.Init(sample_rate);
@@ -64,7 +64,7 @@ int main(void)
     //Set envelope parameters
     env.Init(sample_rate);
     env.SetTime(ADENV_SEG_ATTACK, .01);
-    env.SetTime(ADENV_SEG_DECAY, .03);
+    env.SetTime(ADENV_SEG_DECAY, .1);
     env.SetMax(.5);
     env.SetMin(0);
     env.SetCurve(0);
